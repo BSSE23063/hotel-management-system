@@ -1,8 +1,8 @@
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { Customer } from 'src/customer/entities/customer.entity';
 import { Room } from 'src/room/entities/room.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 @Entity('Admins')
 export class Admin {
   @PrimaryGeneratedColumn()
@@ -14,8 +14,8 @@ export class Admin {
   @Column()
   phone_no: string;
 
-  @Column({default:"admin"})
-  role:string
+  @Column({ default: 'admin' })
+  role: string;
 
   @OneToMany(() => Booking, (Booking) => Booking.admin, {
     cascade: true,
@@ -34,4 +34,17 @@ export class Admin {
     onDelete: 'CASCADE',
   })
   customers: Customer[];
+
+  @Column({default:'random'})
+  password: string;
+
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashpassword(){
+    if(this.password){
+      const saltRounds=10;
+      this.password=await bcrypt.hash(this.password,saltRounds);
+    }
+  }
 }

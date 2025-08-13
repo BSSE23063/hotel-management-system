@@ -16,7 +16,8 @@ import { RoleGuard } from 'src/auth/role.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/auth/role.enum';
 
-@UseGuards(jwtAuthGuard, RoleGuard)
+@UseGuards(jwtAuthGuard,RoleGuard)
+@Roles(Role.Customer,Role.Admin)
 @Controller('customer')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
@@ -26,7 +27,7 @@ export class CustomerController {
     return this.customerService.create(createCustomerDto);
   }
 
-  @Roles(Role.Customer)
+  
   @Get()
   findAll() {
     return this.customerService.findAll();

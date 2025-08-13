@@ -4,7 +4,7 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from './entities/admin.entity';
 import { Repository } from 'typeorm';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AdminService {
   constructor(
@@ -45,14 +45,14 @@ export class AdminService {
     return await this.adminrepository.remove(target);
   }
 
-async findOnebynameandid(id: number, name: string) {
-     const admin = await this.adminrepository.findOne({where:{id}});
-  if(admin){
-    if(admin.name==name){
-      return admin;
-    }
+  async findOnebynameandpass( name: string,password:string) {
+    const admin = await this.adminrepository.findOne({ where: {name} });
+   if(admin){
+         const ispasswordvalid= await bcrypt.compare(password,admin.password);
+         if(ispasswordvalid){
+          return { password: admin.password, name: admin.name, role: admin.role };
+         }
+         return null;
   }
-  return null;
-  }
-
+}
 }
