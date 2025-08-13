@@ -6,16 +6,16 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Admin } from 'src/admin/entities/admin.entity'; 
-import { Customer } from 'src/customer/entities/customer.entity';
 import { CustomerModule } from 'src/customer/customer.module';
 import { AdminModule } from 'src/admin/admin.module';
+import { blacklist_tkn } from './blacklist_tkn.entity';
+import { RoleGuard } from './role.guard';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([blacklist_tkn]),
     PassportModule,
     ConfigModule, 
-    
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -27,8 +27,8 @@ import { AdminModule } from 'src/admin/admin.module';
     CustomerModule,
     AdminModule,
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, RoleGuard ],
   controllers: [AuthController],
-  exports: [AuthService,JwtModule],
+  exports: [AuthService,JwtModule,RoleGuard],
 })
 export class AuthModule {}

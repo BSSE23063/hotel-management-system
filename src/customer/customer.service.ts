@@ -9,6 +9,7 @@ import { Customer } from './entities/customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AdminService } from 'src/admin/admin.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class CustomerService {
@@ -61,14 +62,18 @@ export class CustomerService {
     return await this.customerrepository.remove(target);
   }
   
-async findOnebynameAndId(id: number, name: string) {
-  const customer = await this.customerrepository.findOne({where:{id}});
-  if(customer){
-    if(customer.name==name){
-      return customer;
+async findOnebynameandpass(name: string,password: string) {
+  const customer = await this.customerrepository.findOne({ where: {name} });
+     if(customer){
+      if(customer.password=='random'){
+        return { password: customer.password, name: customer.name, role: customer.role };
+      }
+           const ispasswordvalid= await bcrypt.compare(password,customer.password);
+           if(ispasswordvalid){
+            return { password: customer.password, name: customer.name, role: customer.role };
+           }
+           return null;
     }
-  }
-  return null;
   
 }
 

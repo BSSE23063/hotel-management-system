@@ -24,6 +24,7 @@ import { RoomService } from './room_service/entities/room_service.entity';
 import { RoomsCategory } from './rooms_category/entities/rooms_category.entity';
 import { Service } from './services/entities/service.entity';
 import { AuthModule } from './auth/auth.module';
+import { blacklist_tkn } from './auth/blacklist_tkn.entity';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { AuthModule } from './auth/auth.module';
           RoomService,
           RoomsCategory,
           Service,
+          blacklist_tkn,
         ],
       }),
     }),
